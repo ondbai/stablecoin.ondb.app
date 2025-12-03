@@ -1,0 +1,37 @@
+{
+  "name": "stablecoin",
+  "version": "1.0.0",
+  "description": "VietRSD Stablecoin implementation using OnChainDB",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "cli": "ts-node src/index.ts",
+    "setup": "ts-node src/index.ts setup",
+    "mint": "ts-node src/index.ts mint",
+    "burn": "ts-node src/index.ts burn",
+    "transfer": "ts-node src/index.ts transfer",
+    "balance": "ts-node src/index.ts balance",
+    "supply": "ts-node src/index.ts supply",
+    "info": "ts-node src/index.ts info",
+    "history": "ts-node src/index.ts history",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:start": "cd frontend && npm run start"
+  },
+  "keywords": [
+    "stablecoin",
+    "onchaindb",
+    "celestia",
+    "vietrsd"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@onchaindb/sdk": "file:../../onchaindb/sdk-ts",
+    "@types/node": "^24.10.1",
+    "dotenv": "^17.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
