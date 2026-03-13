@@ -1,4 +1,4 @@
-import { createClient, OnChainDBClient, PaymentRequiredError, X402Quote, X402PaymentRequirement } from '@onchaindb/sdk';
+import { createClient, OnDBClient, PaymentRequiredError, X402Quote, X402PaymentRequirement } from '@onchaindb/sdk';
 import { sha256, ripemd160 } from '@cosmjs/crypto';
 import { toHex } from '@cosmjs/encoding';
 
@@ -192,9 +192,9 @@ const COLLECTIONS = {
 // In-memory lock for preventing concurrent spends of the same UTXO
 const spendingLocks = new Map<string, Promise<void>>();
 
-let sdkClient: OnChainDBClient | null = null;
+let sdkClient: OnDBClient | null = null;
 
-function getClient(): OnChainDBClient {
+function getClient(): OnDBClient {
   if (!sdkClient) {
     sdkClient = createClient({
       endpoint: ENDPOINT,

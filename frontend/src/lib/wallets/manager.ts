@@ -27,8 +27,6 @@ const adapters: Record<WalletType, WalletAdapter | null> = {
   keplr: keplrAdapter,
   phantom: phantomAdapter,
   metamask: metamaskAdapter,
-  coinbase: null, // Not implemented yet
-  custom: null,
 };
 
 // Get a specific wallet adapter
@@ -186,7 +184,7 @@ export class WalletManager {
     return this.currentAdapter.getBalance(addr);
   }
 
-  // Create a payment callback for use with OnChainDBClient.store()
+  // Create a payment callback for use with OnDBClient.store()
   // This returns a function that handles the x402 payment flow automatically
   createPaymentCallback(): (quote: X402Quote) => Promise<PaymentResult> {
     return async (quote: X402Quote): Promise<PaymentResult> => {
@@ -209,7 +207,7 @@ export class WalletManager {
 
           // Use native payment for Celestia
           if (compatibleOption.extra?.chainType === 'cosmos') {
-            const amountUtia = Math.ceil(quote.totalCostTia * 1_000_000);
+            const amountUtia = Math.ceil(quote.totalCost * 1_000_000);
             const txHash = await this.sendPayment(quote.brokerAddress, amountUtia);
             return {
               txHash,
@@ -223,7 +221,7 @@ export class WalletManager {
       }
 
       // Fallback to native Celestia payment
-      const amountUtia = Math.ceil(quote.totalCostTia * 1_000_000);
+      const amountUtia = Math.ceil(quote.totalCost * 1_000_000);
       const txHash = await this.sendPayment(quote.brokerAddress, amountUtia);
       return {
         txHash,

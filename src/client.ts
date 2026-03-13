@@ -1,10 +1,10 @@
-import { createClient, OnChainDBClient, StoreResponse, PaymentRequiredError, X402Quote } from '@onchaindb/sdk';
+import { createClient, OnDBClient, StoreResponse } from '@onchaindb/sdk';
 import { config } from './config';
 import { StoreResult } from './types';
 
-let sdkClient: OnChainDBClient | null = null;
+let sdkClient: OnDBClient | null = null;
 
-function getClient(): OnChainDBClient {
+function getClient(): OnDBClient {
   if (!sdkClient) {
     sdkClient = createClient({
       endpoint: config.endpoint,
@@ -60,11 +60,22 @@ export async function query<T extends Record<string, any>>(
   limit?: number
 ): Promise<T[]> {
   const client = getClient();
-  const result = await client.query({
-    collection,
-    filters,
-    limit,
-  });
+  let qb = client.queryBuilder().collection(collection);
+
+  if (filters) {
+    for (const [field, value] of Object.entries(filters)) {
+      if (field === '$or' || field.startsWith('$')) {
+        continue; // Skip complex operators, handle client-side
+      }
+      qb = qb.whereField(field).equals(value);
+    }
+  }
+
+  if (limit) {
+    qb = qb.limit(limit);
+  }
+
+  const result = await qb.selectAll().execute();
   return (result.records || []) as T[];
 }
 
@@ -73,17 +84,15 @@ export async function findOne<T extends Record<string, any>>(
   filters: Record<string, any>
 ): Promise<T | null> {
   const client = getClient();
-  const result = await client.findUnique<T>(collection, filters);
-  return result;
-}
+  let qb = client.queryBuilder().collection(collection);
 
-export async function findMany<T extends Record<string, any>>(
-  collection: string,
-  filters: Record<string, any> = {},
-  options: { limit?: number; offset?: number } = {}
-): Promise<T[]> {
-  const client = getClient();
-  return client.findMany<T>(collection, filters, options);
+  for (const [field, value] of Object.entries(filters)) {
+    qb = qb.whereField(field).equals(value);
+  }
+
+  const result = await qb.selectAll().limit(1).execute();
+  const records = (result.records || []) as T[];
+  return records.length > 0 ? records[0] : null;
 }
 
 export async function updateDocument<T extends Record<string, any>>(
@@ -91,21 +100,12 @@ export async function updateDocument<T extends Record<string, any>>(
   filter: Record<string, any>,
   update: Partial<T>
 ): Promise<StoreResult> {
-  // For updates, we need to fetch, modify, and re-store
   const existing = await findOne<T>(collection, filter);
   if (!existing) {
     throw new Error('Document not found');
   }
   const updated = { ...existing, ...update };
   return store(collection, [updated]);
-}
-
-export async function countDocuments(
-  collection: string,
-  filters: Record<string, any> = {}
-): Promise<number> {
-  const client = getClient();
-  return client.countDocuments(collection, filters);
 }
 
 // Export for direct SDK access if needed

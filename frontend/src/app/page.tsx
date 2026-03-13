@@ -164,7 +164,7 @@ export default function Home() {
     retryFn: (paymentTxHash: string, paymentResult?: PaymentResult) => Promise<unknown>
   ): Promise<unknown> => {
     console.log('[handlePaymentAndRetry] Starting payment flow:', {
-      totalCostTia: quote.totalCostTia,
+      totalCost: quote.totalCost,
       brokerAddress: quote.brokerAddress,
       optionsCount: quote.allOptions?.length || 0,
       walletType: wallet?.walletType,
@@ -210,7 +210,7 @@ export default function Home() {
         // Use native payment for Celestia
         if (compatibleOption.extra?.chainType === 'cosmos') {
           console.log('[handlePaymentAndRetry] Using native Cosmos payment');
-          const amountUtia = Math.ceil(quote.totalCostTia * 1_000_000);
+          const amountUtia = Math.ceil(quote.totalCost * 1_000_000);
           const txHash = await walletManager.sendPayment(quote.brokerAddress, amountUtia);
           console.log('[handlePaymentAndRetry] Cosmos payment txHash:', txHash);
           return retryFn(txHash);
@@ -222,7 +222,7 @@ export default function Home() {
 
     // Fallback to native Celestia payment
     console.log('[handlePaymentAndRetry] Falling back to native Celestia payment');
-    const amountUtia = Math.ceil(quote.totalCostTia * 1_000_000);
+    const amountUtia = Math.ceil(quote.totalCost * 1_000_000);
     const txHash = await walletManager.sendPayment(quote.brokerAddress, amountUtia);
     console.log('[handlePaymentAndRetry] Fallback payment txHash:', txHash);
     return retryFn(txHash);
@@ -344,7 +344,7 @@ export default function Home() {
           setMintError('Payment required. Please connect your wallet first.');
           return;
         }
-        setMintResult(`Payment required: ${data.quote.totalCostTia} TIA. Processing...`);
+        setMintResult(`Payment required: ${data.quote.totalCost} TIA. Processing...`);
         await handlePaymentAndRetry(data.quote, (txHash) =>
           handleMintWithPayment(address, amount, txHash)
         );
@@ -440,7 +440,7 @@ export default function Home() {
       const data = await res.json();
 
       if (res.status === 402 && data.paymentRequired && data.quote) {
-        setBurnResult(`Payment required: ${data.quote.totalCostTia} TIA. Processing...`);
+        setBurnResult(`Payment required: ${data.quote.totalCost} TIA. Processing...`);
         await handlePaymentAndRetry(data.quote, (txHash) =>
           handleBurnWithPayment(amount, txHash, signedRequest!)
         );
@@ -550,7 +550,7 @@ export default function Home() {
       const data = await res.json();
 
       if (res.status === 402 && data.paymentRequired && data.quote) {
-        setTransferResult(`Payment required: ${data.quote.totalCostTia} TIA. Processing...`);
+        setTransferResult(`Payment required: ${data.quote.totalCost} TIA. Processing...`);
         await handlePaymentAndRetry(data.quote, (txHash) =>
           handleTransferWithPayment(to, amount, txHash, signedRequest!)
         );

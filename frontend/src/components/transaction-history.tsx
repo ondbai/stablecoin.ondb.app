@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Loader2, History, ArrowUpRight, ArrowDownLeft, Flame, Sparkles, RefreshCw } from 'lucide-react';
+import { Loader2, History, ArrowUpRight, Flame, Sparkles, RefreshCw } from 'lucide-react';
 
 interface TransactionInput {
   utxoId: string;

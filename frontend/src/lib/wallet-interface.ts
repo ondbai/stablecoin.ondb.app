@@ -48,7 +48,7 @@ export interface PaymentResult {
 // Quote format for payment callback (matches X402Quote from SDK)
 export interface X402Quote {
   quoteId: string;
-  totalCostTia: number;
+  totalCost: number;
   amountRaw: string;
   brokerAddress: string;
   description: string;
@@ -64,7 +64,7 @@ export interface X402Quote {
 }
 
 // Supported wallet types
-export type WalletType = 'keplr' | 'metamask' | 'phantom' | 'coinbase' | 'custom';
+export type WalletType = 'keplr' | 'metamask' | 'phantom';
 
 // Wallet connection state
 export interface WalletState {

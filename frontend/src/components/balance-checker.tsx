@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader2, Search, Wallet, Copy, Check, ExternalLink } from 'lucide-react';
+import { Loader2, Search, Wallet, Copy, Check } from 'lucide-react';
 
 interface UTXO {
   id: string;

@@ -24,19 +24,7 @@ export interface StablecoinMetadata {
   updatedAt: string;
 }
 
-export interface Quote {
-  type: 'quote';
-  broker_address: string;
-  total_cost_tia: string;
-  total_cost_utia: number;
-}
-
 export interface StoreResult {
   block_height: number;
   ticket_id?: string;
-}
-
-export interface PaymentProof {
-  txHash: string;
-  network: string;
 }
